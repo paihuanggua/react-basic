@@ -1,0 +1,344 @@
+Bable
+	1.如果你想要在命令行使用Babel，你可以安装babel-cli，
+	  或者你需要在一个Node项目中使用Babel，你可以使用babel-core
+
+EsLint
+	帮助我们检查Javascript编程时的语法错误。
+	比如：在Javascript应用中，你很难找到你漏泄的变量或者方法。
+	EsLint能够帮助我们分析JS代码，找到bug并确保一定程度的JS语法书写的正确性。
+
+copy-webpack-plugin
+	npm install --save-dev copy-webpack-plugin
+	Usage
+		1.new CopyWebpackPlugin([patterns], options)
+		2.A pattern looks like: { from: 'source', to: 'dest' }
+
+mockjs 
+	生成随机数据 &amp; 拦截 Ajax 请求
+	https://github.com/nuysoft/Mock/wiki/Getting-Started
+
+WEBPACK DEV SERVER
+	1.webpack.config.js
+
+	  var path = require("path");
+	  module.exports = {
+  		entry: {
+    			app: ["./app/main.js"]
+  		},
+  		output: {
+    			path: path.resolve(__dirname, "build"),
+    			publicPath: "/assets/",
+    			filename: "bundle.js"
+  			}
+	  };
+	2.Automatic Refresh
+		Iframe mode=>http://<host>:<port>/webpack-dev-server/<path>
+		Inline mode=>http://<host>:<port>/<path>
+			webpack.config.js没有inline: true时
+				var config = require("./webpack.config.js");
+				config.entry.app.unshift("webpack-dev-server/client?http://localhost:8080/");
+				var compiler = webpack(config);
+				var server = new WebpackDevServer(compiler, {...});
+				server.listen(8080);
+			加<script src="http://localhost:8080/webpack-dev-server.js"></script>
+		Hot Module Replacement 
+			--inline --hot
+			http://<host>:<port>/<path>
+
+			var config = require("./webpack.config.js");
+			config.entry.app.unshift("webpack-dev-server/client?http://localhost:8080/", "webpack/hot/dev-server");
+			var compiler = webpack(config);
+			var server = new webpackDevServer(compiler, {
+  				hot: true
+  				...
+			});
+			server.listen(8080);
+
+webpack-dev-server CLI
+	--content-base <file/directory/url/port>: base path for the content.
+	--quiet: don’t output anything to the console.
+	--no-info: suppress boring information.
+	--colors: add some colors to the output.
+	--no-colors: don’t use colors in the output.
+	--compress: use gzip compression.
+	--host <hostname/ip>: hostname or IP. 0.0.0.0 binds to all hosts.
+	--port <number>: port.
+	--inline: embed the webpack-dev-server runtime into the bundle.
+	--hot: adds the HotModuleReplacementPlugin and switch the server to hot mode. Note: make sure you don’t 
+
+addHotModuleReplacementPlugin twice.
+	--hot --inline also adds the webpack/hot/dev-server entry.
+	--lazy: no watching, compiles on request (cannot be combined with --hot).
+	--https: serves webpack-dev-server over HTTPS Protocol. Includes a self-signed certificate that is used when serving the requests.
+	--cert, --cacert, --key: Paths the certificate files.
+	--open: opens the url in default browser (for webpack-dev-server versions > 2.0).
+	--history-api-fallback: enables support for history API fallback.
+	
+配置文件中的关键devserver下。通过命令行参数重写配置文件选项。
+
+NODE_ENV=production
+
+	Before running your app, you can do this in console,
+
+	export NODE_ENV=production
+	Or if you are in windows you could try this:
+
+	SET NODE_ENV=production
+	or you can run your app like this:
+
+	NODE_ENV=production node app.js
+	You can also set it in your js file:
+
+	process.env.NODE_ENV = 'production';
+	But I don't suggest to do it in your runtime file, since it's not easy to open up VIM in your server and change it to production. You 
+
+can make a config.json file in your directory and everytime your app runs, it reads from it and sets the configuration.
+
+
+Redux Thunk
+
+	https://github.com/gaearon/redux-thunk
+	npm install --save redux-thunk
+
+	使用 thunk是什么？
+		A thunk is a function that wraps an expression to delay its evaluation.
+		例：let foo = () => 1 + 2;
+
+
+	1、引用
+		- var ReduxThunk = require('redux-thunk')=>1.X
+		+ var ReduxThunk = require('redux-thunk').default=>2.X
+	或者 
+		import ReduxThunk from 'redux-thunk' // no changes here 
+
+	2、说明及用法
+		Redux Thunk middleware allows you to write action creators that return a function instead of an action.The thunk can be used to delay the dispatch of an action, or to dispatch only if a certain condition is met. The inner function receives the store methods dispatch and getState as parameters.
+
+		An action creator that returns a function to perform asynchronous dispatch:
+		异步：
+		const INCREMENT_COUNTER = 'INCREMENT_COUNTER'
+		function increment() {
+		  return {
+		    type: INCREMENT_COUNTER
+		  };
+		}
+
+		function incrementAsync() {
+		  return dispatch => {
+		    setTimeout(() => {
+		      // Yay! Can invoke sync or async actions with `dispatch`
+		      dispatch(increment());
+		    }, 1000);
+		  };
+		}
+
+
+		An action creator that returns a function to perform conditional dispatch:
+
+		function incrementIfOdd() {
+		  return (dispatch, getState) => {
+		    const { counter } = getState();
+
+		    if (counter % 2 === 0) {
+		      return;
+		    }
+
+		    dispatch(increment());
+		  };
+		}
+	3、使用 enable Redux Thunk, use applyMiddleware():
+
+		import { createStore, applyMiddleware } from 'redux';
+		import thunk from 'redux-thunk';
+		import rootReducer from './reducers/index';
+
+		// Note: this API requires redux@>=3.1.0***
+		const store = createStore(
+		  rootReducer,
+		  applyMiddleware(thunk)
+		);
+	4、对比
+		// These are the normal action creators you have seen so far.
+		// The actions they return can be dispatched without any middleware.
+		// However, they only express “facts” and not the “async flow”.
+		function makeASandwich(forPerson, secretSauce) {
+		  return {
+		    type: 'MAKE_SANDWICH',
+		    forPerson,
+		    secretSauce
+		  };
+		}
+
+		function apologize(fromPerson, toPerson, error) {
+		  return {
+		    type: 'APOLOGIZE',
+		    fromPerson,
+		    toPerson,
+		    error
+		  };
+		}
+
+		function withdrawMoney(amount) {
+		  return {
+		    type: 'WITHDRAW',
+		    amount
+		  };
+		}
+		// But what do you do when you need to start an asynchronous action,
+		// such as an API call, or a router transition?
+		// Meet thunks.
+		// A thunk is a function that returns a function.
+		// This is a thunk.
+		见图片
+
+cross-env=>sets an environment
+
+	This micro-lib allows you to provide a script which sets an environment using unix style and have it work on windows too
+
+	 npm scripts:
+	{
+	  "scripts": {
+	    "build": "cross-env NODE_ENV=production webpack --config build/webpack.config.js"
+	  }
+	}
+	最终，执行的命令（使用产卵）是：
+	webpack --config build/webpack.config.js
+	The NODE_ENV environment variable will be set by cross-env
+
+node-libs-browser
+	The node core libs for in-browser usage.
+	https://github.com/webpack/node-libs-browser
+
+
+babel-preset-react-hmre
+	https://github.com/danmartinez101/babel-preset-react-hmre
+	Babel preset for React HMR and Error Catching
+
+react-transform-hmr
+	https://github.com/gaearon/react-transform-hmr
+
+babel-polyfill
+	https://github.com/thejameskyle/babel-handbook/blob/master/translations/zh-Hans/user-handbook.md
+	polyfill即是在当前运行环境中用来复制（意指模拟性的复制，而不是拷贝）尚不存在的原生 api 的代码。 能让你提前使用还不可用的 APIs，Array.from 就是一个例子。
+
+window.fetch polyfill
+	https://github.com/github/fetch
+	Installation=>
+		bower install fetch
+		bower install es6-promise
+		npm install whatwg-fetch --save
+
+	For a node.js implementation, try node-fetch.
+	For use with webpack, add this package in the entry configuration option before your application entry point:
+		entry: ['whatwg-fetch', ...]
+
+	For babel and es2015+, make sure to import the file:
+		import 'whatwg-fetch';
+		fetch(...);
+
+	Usage=>
+		HTML
+			fetch('/users.html')
+			  .then(function(response) {
+			    return response.text()
+			  }).then(function(body) {
+			    document.body.innerHTML = body
+			  })
+
+		JSON
+			fetch('/users.json')
+			  .then(function(response) {
+			    return response.json()
+			  }).then(function(json) {
+			    console.log('parsed json', json)
+			  }).catch(function(ex) {
+			    console.log('parsing failed', ex)
+			  })
+
+		Post form
+			var form = document.querySelector('form')
+
+			fetch('/users', {
+			  method: 'POST',
+			  body: new FormData(form)
+			})
+
+		Post JSON
+			fetch('/users', {
+			  method: 'POST',
+			  headers: {
+			    'Accept': 'application/json',
+			    'Content-Type': 'application/json'
+			  },
+			  body: JSON.stringify({
+			    name: 'Hubot',
+			    login: 'hubot',
+			  })
+			})
+
+
+
+isomorphic-fetch
+	https://github.com/matthew-andrews/isomorphic-fetch
+	This adds fetch as a global so that its API is consistent between client and server.
+	You must bring your own ES6 Promise compatible polyfill, I suggest es6-promise.
+
+	require('es6-promise').polyfill();
+	require('isomorphic-fetch');
+
+	fetch('//offline-news-api.herokuapp.com/stories')
+	    .then(function(response) {
+	        if (response.status >= 400) {
+	            throw new Error("Bad response from server");
+	        }
+	        return response.json();
+	    })
+	    .then(function(stories) {
+	        console.log(stories);
+	    });
+
+redux-logger
+	import { applyMiddleware, createStore } from 'redux';
+	import thunk from 'redux-thunk';
+	import promise from 'redux-promise';
+	import createLogger from 'redux-logger';
+
+	const logger = createLogger();
+	const store = createStore(
+	  reducer,
+	  applyMiddleware(thunk, promise, logger)
+	);
+
+	// Note passing middleware as the third argument requires redux@>=3.1.0
+
+redux-promise
+	https://github.com/acdlite/redux-promise
+
+babel-register
+	https://github.com/aleclarson/babel-register
+	http://babeljs.io/docs/usage/require/
+
+enzyme=>测试
+	https://github.com/airbnb/enzyme
+
+expect
+	https://github.com/mjackson/expect
+
+humps
+	https://github.com/domchristie/humps
+	强调对驼峰在JavaScript的字符串和对象键转换器。
+	例子：（看官网）
+	humps.camelize('hello_world') // 'helloWorld'
+	humps.decamelize('fooBar') // 'foo_bar'
+	humps.decamelize('fooBarBaz', { separator: '-' }) // 'foo-bar-baz'
+
+lodash
+	https://github.com/lodash/lodash
+	集成js方法，查看文档
+
+normalizr
+	https://github.com/paularmstrong/normalizr
+
+concurrently
+	https://github.com/kimmobrunfeldt/concurrently
+
